@@ -1,117 +1,219 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import {
-  CameraView,
-  CameraType,
-  useCameraPermissions,
-  BarcodeScanningResult,
-} from "expo-camera";
-import { useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+  Button,
+  ButtonText,
+  HStack,
+  Input,
+  InputField,
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+  Textarea,
+  TextareaInput,
+  VStack,
+} from '@/components/ui';
+import {
+  FormControl,
+  FormControlError,
+  FormControlErrorText,
+  FormControlLabel,
+  FormControlLabelText,
+} from '@/components/ui/form-control';
+import { useBottomPadding } from '@/hooks/useBottomNavigationPadding';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
-export default function App() {
-  const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
-  const [scanned, setScanned] = useState(false); // Track scan status
-  const [barcode, setBarcode] = useState<string | null>(null); // Store the scanned barcode value
+export default function ReceiptHistory() {
+  const bottomPadding = useBottomPadding();
 
-  if (!permission) {
-    // Camera permissions are still loading.
-    return <View />;
-  }
+  // Use react-hook-form for validation
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      dropdown: '',
+      numberInput: '',
+      textInput: '',
+      textArea: '',
+    },
+  });
 
-  if (!permission.granted) {
-    // Camera permissions are not granted yet.
-    return (
-      <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
-  }
-
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  }
-
-  function handleBarcodeScan(result: BarcodeScanningResult) {
-    console.log("scanned value", result.data);
-    setBarcode(result.data); // Set the scanned barcode data
-    setScanned(true); // Stop the camera
-  }
+  const onSubmit = (data: any) => {
+    console.log('Form Data:', data);
+    reset();
+  };
 
   return (
-    <ThemedView style={styles.container}>
-      {scanned ? (
-        <ThemedView style={styles.resultContainer}>
-          <ThemedText style={styles.resultText}>
-            Scanned Value: {barcode}
-          </ThemedText>
-          <Button
-            title="Scan Again"
-            onPress={() => {
-              setScanned(false); // Reset scan status
-              setBarcode(null); // Clear scanned data
-            }}
-          />
-        </ThemedView>
-      ) : (
-        <CameraView
-          style={styles.camera}
-          facing={facing}
-          enableTorch={false}
-          onBarcodeScanned={handleBarcodeScan}
-        >
-          <ThemedView style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={toggleCameraFacing}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: bottomPadding }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        style={styles.container}
+      >
+        <VStack className="w-full p-4">
+          <FormControl isInvalid={!!errors.dropdown}>
+            <FormControlLabel>
+              <FormControlLabelText>Select an Option</FormControlLabelText>
+            </FormControlLabel>
+            <Controller
+              control={control}
+              rules={{ required: 'This field is required' }}
+              render={({ field: { onChange, value } }) => (
+                <Select onValueChange={onChange}>
+                  <SelectTrigger variant="outline">
+                    <SelectInput placeholder="Select an option" value={value} />
+                    <SelectIcon />
+                  </SelectTrigger>
+                  <SelectPortal>
+                    <SelectBackdrop />
+                    <SelectContent>
+                      <SelectItem label="Option 1" value="option1" />
+                      <SelectItem label="Option 2" value="option2" />
+                      <SelectItem label="Option 3" value="option3" />
+                    </SelectContent>
+                  </SelectPortal>
+                </Select>
+              )}
+              name="dropdown"
+            />
+            {errors.dropdown && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.dropdown.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.numberInput} className="mt-4">
+            <FormControlLabel>
+              <FormControlLabelText>Enter a Number</FormControlLabelText>
+            </FormControlLabel>
+            <Controller
+              control={control}
+              rules={{
+                required: 'Number is required',
+                pattern: { value: /^[0-9]+$/, message: 'Enter a valid number' },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <Input variant="outline">
+                  <InputField
+                    placeholder="Enter number..."
+                    value={value}
+                    keyboardType="numeric"
+                    onChangeText={onChange}
+                  />
+                </Input>
+              )}
+              name="numberInput"
+            />
+            {errors.numberInput && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.numberInput.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.textInput} className="mt-4">
+            <FormControlLabel>
+              <FormControlLabelText>Text Input</FormControlLabelText>
+            </FormControlLabel>
+            <Controller
+              control={control}
+              rules={{
+                required: 'Text is required',
+                minLength: { value: 3, message: 'At least 3 characters' },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <Input variant="outline">
+                  <InputField
+                    placeholder="Enter text..."
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                </Input>
+              )}
+              name="textInput"
+            />
+            {errors.textInput && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.textInput.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.textArea} className="mt-4">
+            <FormControlLabel>
+              <FormControlLabelText>Description</FormControlLabelText>
+            </FormControlLabel>
+            <Controller
+              control={control}
+              rules={{ required: 'This field cannot be empty' }}
+              render={({ field: { onChange, value } }) => (
+                <Textarea size="md" className="w-full">
+                  <TextareaInput
+                    placeholder="Enter details..."
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                </Textarea>
+              )}
+              name="textArea"
+            />
+            {errors.textArea && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.textArea.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+
+          {/* Buttons */}
+          <HStack className="mt-6 w-full">
+            <Button
+              size="lg"
+              variant="outline"
+              className="flex-1"
+              onPress={() => reset()}
             >
-              <Text style={styles.text}>Flip Camera</Text>
-            </TouchableOpacity>
-          </ThemedView>
-        </CameraView>
-      )}
-    </ThemedView>
+              <ButtonText>Cancel</ButtonText>
+            </Button>
+            <Button
+              className="ml-2 flex-1"
+              size="lg"
+              variant="solid"
+              onPress={handleSubmit(onSubmit)}
+            >
+              <ButtonText className="text-white">Submit</ButtonText>
+            </Button>
+          </HStack>
+        </VStack>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    justifyContent: "center",
-  },
-  message: {
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-  camera: {
-    flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 64,
-  },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-  },
-  resultContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  resultText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    backgroundColor: '#F7F7F7',
+    padding: 16,
   },
 });

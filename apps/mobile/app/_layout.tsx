@@ -39,6 +39,9 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
+          <Stack.Screen name="landing" />
+          {/* <Stack.Screen name="leave-request-log" /> */}
+          <Stack.Screen name="leave-form" />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
