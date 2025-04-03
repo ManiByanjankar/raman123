@@ -1,129 +1,321 @@
-import { Image, Platform, StyleSheet } from 'react-native';
+import { useBottomPadding } from '@/hooks/useBottomNavigationPadding';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import React from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+export default function ReceiptDetails() {
+  const bottomPadding = useBottomPadding();
 
-export default function TabTwoScreen() {
+  const attachments = [
+    { id: 1, name: 'Invoice_2024_001.pdf' },
+    { id: 2, name: 'Receipt_Details.pdf' },
+    { id: 3, name: 'Additional_Notes.pdf' },
+  ];
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>
-        This app includes example code to help you get started.
-      </ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the
-          web version, press <ThemedText type="defaultSemiBold">w</ThemedText>{' '}
-          in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the{' '}
-          <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to
-          provide files for different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText>{' '}
-          to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook
-          lets you inspect what the user's current color scheme is, and so you
-          can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">
-            components/HelloWave.tsx
-          </ThemedText>{' '}
-          component uses the powerful{' '}
-          <ThemedText type="defaultSemiBold">
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The{' '}
-              <ThemedText type="defaultSemiBold">
-                components/ParallaxScrollView.tsx
-              </ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerContainer}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#2563eb" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Receipt Details</Text>
+        </View>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: bottomPadding }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        style={styles.container}
+      >
+        {/* Main Card */}
+        <View style={styles.mainCard}>
+          <View style={styles.amountContainer}>
+            <Text style={styles.amountLabel}>Total Amount</Text>
+            <Text style={styles.amount}>Rs. 2,100</Text>
+            <View style={styles.tags}>
+              <View style={styles.vatTag}>
+                <Text style={styles.tagText}>VAT</Text>
+              </View>
+              <View style={styles.reimbursedTag}>
+                <Text style={styles.tagText}>Reimbursed</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.detailsContainer}>
+            <View style={styles.detailItem}>
+              <Ionicons name="calendar-outline" size={20} color="#64748b" />
+              <Text style={styles.detailLabel}>Date:</Text>
+              <Text style={styles.detailText}>21 July, 2024</Text>
+            </View>
+
+            <View style={styles.detailItem}>
+              <Ionicons name="briefcase-outline" size={20} color="#64748b" />
+              <Text style={styles.detailLabel}>Project:</Text>
+              <Text style={styles.detailText}>Project Name demo</Text>
+            </View>
+
+            <View style={styles.detailItem}>
+              <Ionicons name="folder-outline" size={20} color="#64748b" />
+              <Text style={styles.detailLabel}>Category:</Text>
+              <Text style={styles.detailText}>Category Name</Text>
+            </View>
+
+            <View style={styles.vatAmountContainer}>
+              <Text style={styles.vatAmountLabel}>VAT Amount:</Text>
+              <Text style={styles.vatAmount}>Rs. 162</Text>
+            </View>
+
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.descriptionLabel}>Description</Text>
+              <Text style={styles.description}>
+                yo description rakhne thau ho ra yo bill Aakash le pay gareko ho
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Attachments Section */}
+        <View style={styles.attachmentsSection}>
+          <Text style={styles.attachmentsTitle}>Attachments</Text>
+          <Text style={styles.attachmentsSubtitle}>
+            List of all the attachments
+          </Text>
+
+          {attachments.map((attachment, index) => (
+            <View
+              key={attachment.id}
+              style={[
+                styles.attachmentItem,
+                index === attachments.length - 1 && styles.lastAttachmentItem,
+              ]}
+            >
+              <View style={styles.attachmentLeft}>
+                <View style={styles.fileIconContainer}>
+                  <MaterialCommunityIcons
+                    name="file-document-outline"
+                    size={24}
+                    color="#2563eb"
+                  />
+                </View>
+                <Text style={styles.attachmentName}>{attachment.name}</Text>
+              </View>
+              <TouchableOpacity style={styles.viewButton}>
+                <Text style={styles.viewButtonText}>View</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: '#f1f5f9',
   },
-  titleContainer: {
+  headerContainer: {
+    backgroundColor: '#ffffff',
+    paddingTop: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e2e8f0',
+  },
+  header: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    padding: 16,
+  },
+  backButton: {
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: '#e0e7ff',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginLeft: 12,
+    color: '#1e293b',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  mainCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    margin: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  amountContainer: {
+    padding: 24,
+    alignItems: 'center',
+    backgroundColor: '#2563eb',
+  },
+  amountLabel: {
+    color: '#e0e7ff',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  amount: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 16,
+  },
+  tags: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  vatTag: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  reimbursedTag: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  tagText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  detailsContainer: {
+    padding: 20,
+  },
+  detailItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  detailLabel: {
+    fontSize: 15,
+    color: '#64748b',
+    marginLeft: 12,
+    width: 80,
+  },
+  detailText: {
+    fontSize: 15,
+    color: '#1e293b',
+    flex: 1,
+  },
+  vatAmountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8fafc',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  vatAmountLabel: {
+    fontSize: 15,
+    color: '#64748b',
+    flex: 1,
+  },
+  vatAmount: {
+    fontSize: 15,
+    color: '#2563eb',
+    fontWeight: '600',
+  },
+  descriptionContainer: {
+    marginTop: 20,
+  },
+  descriptionLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1e293b',
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 15,
+    color: '#64748b',
+    lineHeight: 22,
+  },
+  attachmentsSection: {
+    backgroundColor: '#ffffff',
+    margin: 16,
+    marginTop: 0,
+    padding: 20,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  attachmentsTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1e293b',
+    marginBottom: 4,
+  },
+  attachmentsSubtitle: {
+    color: '#64748b',
+    fontSize: 14,
+    marginBottom: 20,
+  },
+  attachmentItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e2e8f0',
+  },
+  lastAttachmentItem: {
+    borderBottomWidth: 0,
+    paddingBottom: 0,
+  },
+  attachmentLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  fileIconContainer: {
+    backgroundColor: '#e0e7ff',
+    padding: 10,
+    borderRadius: 12,
+    marginRight: 12,
+  },
+  attachmentName: {
+    fontSize: 15,
+    color: '#1e293b',
+    flex: 1,
+  },
+  viewButton: {
+    backgroundColor: '#eff6ff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  viewButtonText: {
+    color: '#2563eb',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

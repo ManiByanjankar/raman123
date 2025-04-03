@@ -1,78 +1,88 @@
-import { Image, Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { Box } from '@/components/ui/box';
+import { Button } from '@/components/ui/button';
+import { CopyIcon, Icon } from '@/components/ui/icon';
+import { Text } from '@/components/ui/text';
+import { VStack } from '@/components/ui/vstack';
+import * as Clipboard from 'expo-clipboard';
+import QRCode from 'qrcode';
+import { useEffect, useState } from 'react';
+import { Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg from 'react-native-svg';
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
+  const qrData = 'https://rumsan.com/';
+  const userName = 'Dummy Dummy';
+  const [qrCodeSvg, setQrCodeSvg] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      generateQRCode();
+    }, 1000);
+  }, []);
+
+  const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(qrData);
+  };
+
+  const generateQRCode = async () => {
+    try {
+      const svgString = await QRCode.toString(qrData, { type: 'svg' });
+      setQrCodeSvg(svgString);
+      setLoading(false);
+    } catch (error) {
+      console.error('QR Code Generation Error:', error);
+      setLoading(false);
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }
+    <Box
+      className={`flex-1 bg-gray-100 p-5`}
+      style={{ paddingTop: insets.top + 20 }}
     >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcomes!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          to see changes. Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this
-          starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{' '}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{' '}
-          directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      <VStack className="space-y-4">
+        {/* Greeting */}
+        <Text className="text-xl font-semibold text-gray-800">
+          Hello, {userName}
+        </Text>
+        <Text className="text-xl font-bold text-gray-900">
+          Welcome To Your Dashboard
+        </Text>
+
+        {/* QR Code Card */}
+        <VStack className="bg-white rounded-2xl p-6 items-center shadow-md space-y-4">
+          {loading ? (
+            <Text>Loading QR Code...</Text>
+          ) : (
+            <Svg
+              viewBox="0 0 256 256"
+              width="392"
+              height="392"
+              dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
+            />
+          )}
+
+          <Text className="text-xl font-semibold text-gray-900">
+            {userName}
+          </Text>
+
+          {/* Address & Copy Button */}
+          <Box className="flex-row items-center space-x-2">
+            <Text className="text-base text-gray-500">{qrData}</Text>
+            <Pressable onPress={copyToClipboard} className="p-2">
+              <Icon as={CopyIcon} size="lg" />
+            </Pressable>
+          </Box>
+
+          {/* Scan Button */}
+          <Button className="bg-blue-500 py-3 px-6 rounded-md w-full items-center">
+            <Text className="text-white text-lg font-semibold">Scan</Text>
+          </Button>
+        </VStack>
+      </VStack>
+    </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
